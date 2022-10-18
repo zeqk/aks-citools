@@ -138,7 +138,7 @@ sessionServer:
 
 ## For RBAC support:
 rbac:
-  create: false
+  create: true
 
   ## Define specific rbac permissions.
   ## DEPRECATED: see .Values.rbac.rules
@@ -155,12 +155,25 @@ rbac:
   ##
   ## ref: https://docs.gitlab.com/runner/executors/kubernetes.html#configuring-executor-service-account
   ##
-  rules: []
-  # - resources: ["configmaps", "pods", "pods/attach", "secrets", "services"]
-  #   verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
-  # - apiGroups: [""]
-  #   resources: ["pods/exec"]
-  #   verbs: ["create", "patch", "delete"]
+  rules: 
+    - apiGroups: [""]
+      resources: ["pods"]
+      verbs: ["list", "get", "watch", "create", "delete"]
+    - apiGroups: [""]
+      resources: ["pods/exec"]
+      verbs: ["create"]
+    - apiGroups: [""]
+      resources: ["pods/log"]
+      verbs: ["get"]
+    - apiGroups: [""]
+      resources: ["pods/attach"]
+      verbs: ["list", "get", "create", "delete", "update"]
+    - apiGroups: [""]
+      resources: ["secrets"]
+      verbs: ["list", "get", "create", "delete", "update"]      
+    - apiGroups: [""]
+      resources: ["configmaps"]
+      verbs: ["list", "get", "create", "delete", "update"]  
 
   ## Run the gitlab-bastion container with the ability to deploy/manage containers of jobs
   ## cluster-wide or only within namespace
