@@ -25,3 +25,8 @@ az aks start \
 	--resource-group "rg-sandbox" \
 	--name "aks-citools-sbx-ue" --no-wait
 ```
+
+```bash
+kubectl config set-context --current --namespace=helloworld
+kubectl config view --minify | grep namespace:
+```
