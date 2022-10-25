@@ -25,6 +25,9 @@ kind: Service
 metadata:
   namespace: helloworld
   name: hello
+  annotations:
+    # https://learn.microsoft.com/en-us/azure/aks/static-ip#apply-a-dns-label-to-the-service
+    service.beta.kubernetes.io/azure-dns-label-name: myk8stest
 spec:
   type: LoadBalancer
   ports:
