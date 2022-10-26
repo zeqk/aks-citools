@@ -8,6 +8,12 @@ helm install --namespace=traefik-v2  -f ./values.yml  traefik traefik/traefik
 helm upgrade --namespace=traefik-v2  -f ./values.yml  traefik traefik/traefik
 ```
 
+```bash
+kubectl get all -n traefik-v2
+```
+
+```bash
 kubectl -n traefik-v2 port-forward $(kubectl get pods -n traefik-v2 --selector "app.kubernetes.io/name=traefik" --output=name) 9000:9000
+```
 
 http://localhost:9000/dashboard/#/
