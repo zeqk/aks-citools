@@ -43,8 +43,8 @@ kind: Ingress
 metadata:
   name: myingress
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
-
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt    
 spec:
   rules:
     - host: whoami.selftaught.com.ar
@@ -57,17 +57,17 @@ spec:
                 name:  whoami
                 port:
                   number: 80
-          - path: /bar
-            pathType: Exact
-            backend:
-              service:
-                name:  whoami
-                port:
-                  number: 80
-          - path: /foo
-            pathType: Exact
-            backend:
-              service:
-                name:  whoami
-                port:
-                  number: 80
+          # - path: /bar
+          #   pathType: Exact
+          #   backend:
+          #     service:
+          #       name:  whoami
+          #       port:
+          #         number: 80
+          # - path: /foo
+          #   pathType: Exact
+          #   backend:
+          #     service:
+          #       name:  whoami
+          #       port:
+          #         number: 80
