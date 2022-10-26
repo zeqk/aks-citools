@@ -1,0 +1,58 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: whoami2
+  namespace: default
+  labels:
+    app: traefiklabs
+    name: whoami2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefiklabs
+      task: whoami2
+  template:
+    metadata:
+      labels:
+        app: traefiklabs
+        task: whoami2
+    spec:
+      containers:
+        - name: whoami2
+          image: traefik/whoami
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami2
+  namespace: default
+
+spec:
+  ports:
+    - name: http
+      port: 80
+  selector:
+    app: traefiklabs
+    task: whoami2
+---
+# Not supported by external-dns yet
+# https://github.com/kubernetes-sigs/external-dns/issues/2286#issuecomment-1167812955
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: myingressroute2
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`whoami2.selftaught.com.ar`)
+      kind: Rule
+      services:
+        - name: whoami2
+          port: 80
+  tls:
+    certResolver: letsencrypt
