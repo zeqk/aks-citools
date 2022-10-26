@@ -335,7 +335,17 @@ additionalArguments: []
 #  - "--log.level=DEBUG"
 
 # Environment variables to be passed to Traefik's binary
-env: []
+env:
+  - name: CF_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        key: apitoken
+        name: cloudflare-credentials  
+  - name: TRAEFIK_CERTIFICATESRESOLVERS_letsencrypt_ACME_EMAIL
+    valueFrom:
+      secretKeyRef:
+        key: email
+        name: letsencrypt
 # - name: SOME_VAR
 #   value: some-var-value
 # - name: SOME_VAR_FROM_CONFIG_MAP
@@ -573,26 +583,26 @@ persistence:
   annotations: {}
   # subPath: "" # only mount a subpath of the Volume into the pod
 
-certResolvers: {}
-#   letsencrypt:
-#     # for challenge options cf. https://doc.traefik.io/traefik/https/acme/
-#     email: email@example.com
-#     dnsChallenge:
-#       # also add the provider's required configuration under env
-#       # or expand then from secrets/configmaps with envfrom
-#       # cf. https://doc.traefik.io/traefik/https/acme/#providers
-#       provider: digitalocean
-#       # add futher options for the dns challenge as needed
-#       # cf. https://doc.traefik.io/traefik/https/acme/#dnschallenge
-#       delayBeforeCheck: 30
-#       resolvers:
-#         - 1.1.1.1
-#         - 8.8.8.8
+certResolvers:
+  letsencrypt:
+    # for challenge options cf. https://doc.traefik.io/traefik/https/acme/
+    # email: email@example.com
+    dnsChallenge:
+      # also add the provider's required configuration under env
+      # or expand then from secrets/configmaps with envfrom
+      # cf. https://doc.traefik.io/traefik/https/acme/#providers
+      provider: cloudflare
+      # add futher options for the dns challenge as needed
+      # cf. https://doc.traefik.io/traefik/https/acme/#dnschallenge
+      delayBeforeCheck: 30
+      resolvers:
+        - 1.1.1.1
+        - 8.8.8.8
 #     tlsChallenge: true
 #     httpChallenge:
 #       entryPoint: "web"
 #     # match the path to persistence
-#     storage: /data/acme.json
+    storage: /data/acme.json
 
 # If hostNetwork is true, runs traefik in the host network namespace
 # To prevent unschedulabel pods due to port collisions, if hostNetwork=true

@@ -1,6 +1,9 @@
 https://doc.traefik.io/traefik/getting-started/install-traefik/#use-the-helm-chart
 
 ```bash
+kubectl create secret generic cloudflare-credentials --from-literal=apitoken=aaaa -n traefik-v2
+kubectl create secret generic letsencrypt --from-literal=email=aaaa -n traefik-v2
+
 helm install --namespace=traefik-v2  -f ./values.yml  traefik traefik/traefik
 helm upgrade --namespace=traefik-v2  -f ./values.yml  traefik traefik/traefik
 ```
