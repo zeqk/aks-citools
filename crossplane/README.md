@@ -18,6 +18,8 @@ kubectl get all -n crossplane-system
 helm uninstall --namespace crossplane-system crossplane
 ```
 
+Configure
+
 ```bash
 az ad sp create-for-rbac --display-name "Sistemas Crossplane" --sdk-auth --role Contributor --scopes /subscriptions/dbfe8c3f-dc20-468e-85db-e92325113098 > "creds.json"
 kubectl delete secret azure-creds -n crossplane-system --ignore-not-found
@@ -26,4 +28,14 @@ kubectl create secret generic azure-creds -n crossplane-system --from-file=creds
 kubectl apply -f 02-az-provider.yml 
 ```
 
-https://doc.crds.dev/github.com/crossplane/provider-azure@v0.19.0
+References https://doc.crds.dev/github.com/crossplane/provider-azure@v0.19.0
+
+## Create Resources
+
+```bash
+kubectl apply -f 03-az-resourcegroup.yml
+```
+
+References
+
+https://github.com/foxutech/crossplane/tree/main/azure
