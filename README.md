@@ -4,14 +4,14 @@ This project is to test the use of kubernetes in an AKS (Azure Kubernetes Servic
 Set kube.config
 
 ```bash
-az account set --subscription $SUBSCRIPTION_ID
+az account set --subscription "$(az account list --query "[?name == \`Sistemas - Non Production\`].id" -o tsv)"
 az aks get-credentials --resource-group rg-sandbox --name aks-citools-sbx-ue
 ```
 
 Set context
 
 ```bash
-kubectl config set-context --current --namespace=helloworld
+kubectl config set-context --current --namespace=default
 kubectl config view --minify | grep namespace:
 ```
 
