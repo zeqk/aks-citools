@@ -44,3 +44,15 @@ az aks show \
 	--name "aks-citools-sbx-ue" \
 	--query "powerState.code" -o tsv
 ```
+## Other commands
+
+### DB
+
+```bash
+# Get status
+az postgres flexible-server show --resource-group "rg-sandbox" --name "psql-wa01-sbx-ue" --query "state"  --no-wait
+# Stop
+az postgres flexible-server stop --resource-group "rg-sandbox" --name "psql-wa01-sbx-ue"
+# Start
+az postgres flexible-server stop --resource-group "rg-sandbox" --name "psql-wa01-sbx-ue"  --no-wait
+```
