@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  namespace: default
+  namespace: external-dns
   name: external-dns
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  namespace: external-dns
   name: external-dns
 rules:
   - apiGroups: [""]
@@ -22,7 +23,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  namespace: default
+  namespace: external-dns
   name: external-dns-viewer
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -31,12 +32,12 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: external-dns
-    namespace: default
+    namespace: external-dns
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: default
+  namespace: external-dns
   name: external-dns
 spec:
   strategy:
@@ -54,7 +55,7 @@ spec:
         - name: external-dns
           image: k8s.gcr.io/external-dns/external-dns:v0.13.1
           args:
-            - --source=service # ingress is also possible            
+            # - --source=service # ingress is also possible            
             - --source=ingress
             # - --domain-filter=example.com # (optional) limit to only example.com domains; change to match the zone created above.
             # - --zone-id-filter=023e105f4ecef8ad9ca31a8372d0c353 # (optional) limit to a specific zone.
