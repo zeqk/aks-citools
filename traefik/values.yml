@@ -163,7 +163,7 @@ providers:
       enabled: true
       # Published Kubernetes Service to copy status from. Format: namespace/servicename
       # By default this Traefik service
-      pathOverride: "traefik-v2/traefik"
+      pathOverride: "traefik/traefik"
 
 #
 # Add volumes to the traefik pod. The volume name will be passed to tpl.
@@ -339,13 +339,13 @@ env:
   - name: CF_API_TOKEN
     valueFrom:
       secretKeyRef:
-        key: apitoken
-        name: cloudflare-credentials  
+        key: cloudflare-token
+        name: traefik-secrets  
   - name: TRAEFIK_CERTIFICATESRESOLVERS_letsencrypt_ACME_EMAIL
     valueFrom:
       secretKeyRef:
-        key: email
-        name: letsencrypt
+        key: letsencrypt-email
+        name: traefik-secrets
 # - name: SOME_VAR
 #   value: some-var-value
 # - name: SOME_VAR_FROM_CONFIG_MAP

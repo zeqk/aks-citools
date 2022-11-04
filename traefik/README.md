@@ -1,19 +1,20 @@
 https://doc.traefik.io/traefik/getting-started/install-traefik/#use-the-helm-chart
 
 ```bash
-kubectl create secret generic cloudflare-credentials --from-literal=apitoken=aaaa -n traefik-v2
-kubectl create secret generic letsencrypt --from-literal=email=aaaa -n traefik-v2
+kubectl apply -f 01-namespace.yml
+kubectl delete secret traefik-secrets -n traefik --ignore-not-found
+kubectl create secret generic traefik-secrets -n traefik --from-file=letsencrypt-email=./letsencrypt-email.txt --from-file=cloudflare-token=./cloudflare-token.txt
 
-helm install --namespace=traefik-v2  -f ./values.yml  traefik traefik/traefik
-helm upgrade --namespace=traefik-v2  -f ./values.yml  traefik traefik/traefik
+helm install --namespace=traefik  -f ./values.yml traefik traefik/traefik
+helm upgrade --namespace=traefik  -f ./values.yml traefik traefik/traefik
 ```
 
 ```bash
-kubectl get all -n traefik-v2
+kubectl get all -n traefik
 ```
 
 ```bash
-kubectl -n traefik-v2 port-forward $(kubectl get pods -n traefik-v2 --selector "app.kubernetes.io/name=traefik" --output=name) 9000:9000
+kubectl -n traefik port-forward $(kubectl get pods -n traefik --selector "app.kubernetes.io/name=traefik" --output=name) 9000:9000
 ```
 
 http://localhost:9000/dashboard/#/
