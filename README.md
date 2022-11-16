@@ -50,9 +50,9 @@ az aks show \
 
 ```bash
 # Get status
-az postgres flexible-server show --resource-group "rg-sandbox" --name "psql-wa01-sbx-ue" --query "state"  --no-wait
+az postgres flexible-server show --resource-group "rg-sandbox" --name "psql-wa01-sbx-ue" --query "state"
 # Stop
 az postgres flexible-server stop --resource-group "rg-sandbox" --name "psql-wa01-sbx-ue"
 # Start
-az postgres flexible-server stop --resource-group "rg-sandbox" --name "psql-wa01-sbx-ue"  --no-wait
+az postgres flexible-server start --resource-group "rg-sandbox" --name "psql-wa01-sbx-ue"
 ```
