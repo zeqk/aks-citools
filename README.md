@@ -11,6 +11,8 @@ az aks get-credentials --resource-group rg-sandbox --name aks-citools-sbx-ue
 Set context
 
 ```bash
+kubectl config view
+kubectl config current-context
 kubectl config set-context --current --namespace=default
 kubectl config view --minify | grep namespace:
 ```

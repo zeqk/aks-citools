@@ -1,0 +1,6 @@
+providers:
+  kubernetesIngress:
+    publishedService: 
+      # Configuration for ExternalDNS https://github.com/kubernetes-sigs/external-dns/blob/2f4c40b47c9894b5d6eb3d32415d353a39bd0109/docs/faq.md#which-service-and-ingress-controllers-are-supported
+      enabled: true
+      pathOverride: "traefik/traefik"
