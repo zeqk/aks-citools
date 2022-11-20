@@ -1,3 +1,7 @@
+ports:
+  web:
+    redirectTo: websecure
+
 providers:
   kubernetesIngress:
     publishedService: 
