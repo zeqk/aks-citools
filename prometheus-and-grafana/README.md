@@ -16,3 +16,8 @@ kubectl get all -n prometheus
 
 kubectl get secret -n prometheus prometheus-grafana -o=jsonpath='{.data.admin-password}' |base64 -d
 ```
+
+
+```bash
+kubectl apply -f 03-ingress.yml
+```
