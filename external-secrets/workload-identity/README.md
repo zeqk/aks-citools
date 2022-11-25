@@ -1,4 +1,5 @@
 
+https://external-secrets.io/v0.6.1/provider/azure-key-vault/#workload-identity
 
 ```bash
 APPLICATION_NAME="Velero"
@@ -47,8 +48,6 @@ EOF
 
 az ad app federated-credential create --id ${APPLICATION_OBJECT_ID} --parameters @params.json
 
-
-kubectl apply -f 01-namespace.yml
 kubectl apply -f 02-secret-store.yml
 kubectl apply -f 03-external-secret.yml
 
