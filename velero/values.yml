@@ -12,22 +12,24 @@
 # --set initContainers[0].image=velero/velero-plugin-for-<PROVIDER NAME>:<PROVIDER PLUGIN TAG> \
 # --set initContainers[0].volumeMounts[0].mountPath=/target \
 # --set initContainers[0].volumeMounts[0].name=plugins
-
+# https://github.com/vmware-tanzu/helm-charts/blob/main/charts/velero/values.yaml
 configuration:
-  provider: <PROVIDER NAME>
+  provider: azure
   backupStorageLocation:
-    name:
-    bucket:
     config:
-      region:
-  volumeSnapshotLocation:
-    name:
-    config:
-      region:
+      resourceGroup:
+      storageAccount:
+  # volumeSnapshotLocation:
+  #   name:
+  #   config:
+  #     region:
   initContainers:
-    - name: velero-plugin-for-<PROVIDER NAME>
-      image: velero/velero-plugin-for-<PROVIDER NAME>:<PROVIDER PLUGIN TAG>
+    - name: velero-plugin-for-azure
+      image: velero/velero-plugin-for-microsoft-azure:v1.6.0
       volumeMounts:
         - mountPath: /target
           name: plugins
+credentials:
+  extraSecretRef:
+
 

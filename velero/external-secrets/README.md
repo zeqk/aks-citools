@@ -48,4 +48,12 @@ EOF
 az ad app federated-credential create --id ${APPLICATION_OBJECT_ID} --parameters @params.json
 
 
+kubectl apply -f 01-namespace.yml
+kubectl apply -f 02-secret-store.yml
+kubectl apply -f 03-external-secret.yml
+
+kubectl get SecretStores -n velero
+kubectl get ExternalSecret -n velero
+
+kubectl -n velero get secret backupstorage-secret -o jsonpath="{.data.primary-access-key}" | base64 -d; echo
 ```
