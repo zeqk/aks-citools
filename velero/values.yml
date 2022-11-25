@@ -13,23 +13,35 @@
 # --set initContainers[0].volumeMounts[0].mountPath=/target \
 # --set initContainers[0].volumeMounts[0].name=plugins
 # https://github.com/vmware-tanzu/helm-charts/blob/main/charts/velero/values.yaml
+
+
 configuration:
   provider: azure
   backupStorageLocation:
+    provider: azure
+    bucket: velero
     config:
-      resourceGroup:
-      storageAccount:
-  # volumeSnapshotLocation:
-  #   name:
-  #   config:
-  #     region:
+      resourceGroup: rg-backups-iprd-ue
+      subscriptionId: ba90edc7-0080-430e-830e-f5f222c33a0c
+      storageAccount: stbackupsiprdue
   initContainers:
     - name: velero-plugin-for-azure
       image: velero/velero-plugin-for-microsoft-azure:v1.6.0
       volumeMounts:
         - mountPath: /target
           name: plugins
-credentials:
-  extraSecretRef:
+
+serviceAccount:
+  server:
+    create: true
+    name:
+    annotations:      
+      azure.workload.identity/client-id: 10ec2052-e7a4-4af5-9812-ed5ed16a8048 #${APPLICATION_CLIENT_ID}
+      azure.workload.identity/tenant-id: dc1d2d98-eccf-4852-92b3-130cb1192b60 #${TENANT_ID}
+    labels:
+      azure.workload.identity/use: "true"
+
+podLabels:
+  azure.workload.identity/use: "true"
 
 
