@@ -21,7 +21,7 @@ spec:
   project: default
   source:
     path: k8s-argocd/projects
-    repoURL: https://github.com/octubre-softlab/aks-citools.git
+    repoURL: https://github.com/zeqk/aks-citools.git
   syncPolicy:
     automated:
       allowEmpty: true

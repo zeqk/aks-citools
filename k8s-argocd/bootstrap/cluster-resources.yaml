@@ -11,7 +11,7 @@ spec:
   - git:
       files:
       - path: k8s-argocd/bootstrap/cluster-resources/*.json
-      repoURL: https://github.com/octubre-softlab/aks-citools.git
+      repoURL: https://github.com/zeqk/aks-citools.git
       requeueAfterSeconds: 20
       revision: ""
       template:
@@ -41,7 +41,7 @@ spec:
       project: default
       source:
         path: k8s-argocd/bootstrap/cluster-resources/{{name}}
-        repoURL: https://github.com/octubre-softlab/aks-citools.git
+        repoURL: https://github.com/zeqk/aks-citools.git
       syncPolicy:
         automated:
           allowEmpty: true
