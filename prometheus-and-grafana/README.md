@@ -15,6 +15,9 @@ helm install prometheus prometheus-community/kube-prometheus-stack -n prometheus
 kubectl get all -n prometheus
 
 kubectl get secret -n prometheus prometheus-grafana -o=jsonpath='{.data.admin-password}' |base64 -d
+
+kubectl --context aks-citools-sbx-ue port-forward -n prometheus prometheus-prometheus-kube-prometheus-prometheus-0 9090
+
 ```
 
 
