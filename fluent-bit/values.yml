@@ -1,6 +1,17 @@
----
-loki:  
-  serviceName: "loki-loki-distributed-distributor"
-  servicePort: 3100
-  serviceScheme: http
-  servicePath: /api/prom/push
+## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/configuration-file
+config:
+  ## https://docs.fluentbit.io/manual/pipeline/outputs
+  outputs: |
+    [OUTPUT]
+        Name grafana-loki
+        Match *
+        Url http://loki-loki-distributed-distributor:3100/api/prom/push
+        TenantID ""
+        BatchWait 1
+        BatchSize 1048576
+        Labels {job="fluent-bit"}
+        RemoveKeys kubernetes,stream
+        AutoKubernetesLabels false
+        LabelMapPath /fluent-bit/etc/labelmap.json
+        LineFormat json
+        LogLevel warn

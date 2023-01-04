@@ -6,8 +6,8 @@ kind: Kustomization
 #   - grafana-datasource.yml
 helmCharts:
   - name: fluent-bit
-    repo: https://grafana.github.io/helm-charts
-    version: 2.3.2
+    repo: https://fluent.github.io/helm-charts
+    version: 0.21.7
     releaseName: fluent-bit
     namespace: monitoring
     valuesFile: values.yml
