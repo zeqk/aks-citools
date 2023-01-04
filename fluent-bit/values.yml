@@ -1,0 +1,6 @@
+---
+loki:  
+  serviceName: "loki-loki-distributed-distributor"
+  servicePort: 3100
+  serviceScheme: http
+  servicePath: /api/prom/push
