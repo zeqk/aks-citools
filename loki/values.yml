@@ -1,0 +1,40 @@
+# # Configuration for the ingester
+# ingester:
+#   persistence:    
+#     # -- Enable creating PVCs which is required when using boltdb-shipper
+#     enabled: true
+#     # -- Size of persistent or memory disk
+#     size: 10Gi
+
+# # Configuration for the querier
+# querier:
+#     persistence:
+#       # -- Enable creating PVCs for the querier cache
+#       enabled: true
+#       # -- Size of persistent disk
+#       size: 10Gi
+
+# # Configuration for the table-manager
+# tableManager:
+#   # -- Specifies whether the table-manager should be enabled
+#   enabled: true
+
+# # Configuration for the compactor
+# compactor:
+#   # -- Specifies whether compactor should be enabled
+#   enabled: true  
+#   persistence:
+#     # -- Enable creating PVCs for the querier cache
+#     enabled: true
+#     # -- Size of persistent disk
+#     size: 10Gi
+
+  # -- Check https://grafana.com/docs/loki/latest/configuration/#storage_config for more info on how to configure storages
+  # storageConfig:  
+  #   boltdb_shipper:
+  #     shared_store: azure
+  #   azure:
+  #     account_key: {{ .Values.grafana.loki_primary_access_key | fetchSecretValue | quote }}
+  #     account_name: monitoringloki
+  #     container_name: monitoring-loki
+  #     request_timeout: 0
