@@ -1,9 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-# resources:
+resources:
+  - external-secrets.yml
   # - loki-grafana-datasource.configmap.yml
-#   - thanos-external-secrets.yml
-#   - grafana-datasource.yml
 helmCharts:
   - name: loki-distributed
     repo: https://grafana.github.io/helm-charts
@@ -11,10 +10,4 @@ helmCharts:
     releaseName: loki
     namespace: monitoring
     valuesFile: values.yml
-  # - name: loki-stack
-  #   repo: https://grafana.github.io/helm-charts
-  #   version: 2.8.9
-  #   releaseName: loki-stack
-  #   namespace: monitoring
-  #   valuesFile: loki-stack-values.yml
       

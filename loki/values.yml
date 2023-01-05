@@ -1,40 +1,153 @@
-# # Configuration for the ingester
-# ingester:
-#   persistence:    
-#     # -- Enable creating PVCs which is required when using boltdb-shipper
-#     enabled: true
-#     # -- Size of persistent or memory disk
-#     size: 10Gi
+# Configuration for the ingester
+ingester:
+  extraArgs:
+    - -config.expand-env=true
+  extraEnvFrom:
+    - secretRef:
+        name: loki-storage
+  persistence:    
+    # -- Enable creating PVCs which is required when using boltdb-shipper
+    enabled: true
+    # -- Size of persistent or memory disk
+    size: 2Gi
 
-# # Configuration for the querier
-# querier:
-#     persistence:
-#       # -- Enable creating PVCs for the querier cache
-#       enabled: true
-#       # -- Size of persistent disk
-#       size: 10Gi
+# Configuration for the distributor
+distributor:
+  extraArgs:
+    - -config.expand-env=true
+  # -- Environment variables from secrets or configmaps to add to the ingester pods
+  extraEnvFrom:
+    - secretRef:
+        name: loki-storage
 
-# # Configuration for the table-manager
-# tableManager:
-#   # -- Specifies whether the table-manager should be enabled
-#   enabled: true
+# Configuration for the querier
+querier:
+    extraArgs:
+      - -config.expand-env=true
+    # -- Environment variables from secrets or configmaps to add to the ingester pods
+    extraEnvFrom:
+      - secretRef:
+          name: loki-storage
+    persistence:
+      # -- Enable creating PVCs for the querier cache
+      enabled: true
+      # -- Size of persistent disk
+      size: 2Gi
 
-# # Configuration for the compactor
-# compactor:
-#   # -- Specifies whether compactor should be enabled
-#   enabled: true  
-#   persistence:
-#     # -- Enable creating PVCs for the querier cache
-#     enabled: true
-#     # -- Size of persistent disk
-#     size: 10Gi
+# Configuration for the query-frontend
+queryFrontend:
+    extraArgs:
+      - -config.expand-env=true
+    # -- Environment variables from secrets or configmaps to add to the ingester pods
+    extraEnvFrom:
+      - secretRef:
+          name: loki-storage
 
+# Configuration for the table-manager
+tableManager:
+  extraArgs:
+    - -config.expand-env=true
+  # -- Environment variables from secrets or configmaps to add to the ingester pods
+  extraEnvFrom:
+    - secretRef:
+        name: loki-storage
+  # -- Specifies whether the table-manager should be enabled
+  enabled: true
+
+# Configuration for the compactor
+compactor:
+  extraArgs:
+    - -config.expand-env=true
+  # -- Environment variables from secrets or configmaps to add to the ingester pods
+  extraEnvFrom:
+    - secretRef:
+        name: loki-storage
+  # -- Specifies whether compactor should be enabled
+  enabled: true  
+  persistence:
+    # -- Enable creating PVCs for the querier cache
+    enabled: true
+    # -- Size of persistent disk
+    size: 2Gi
+
+loki:
+  structuredConfig:
+    # The limits_config block configures global and per-tenant limits in Loki.
+    limits_config: 
+      # Retention to apply for the store, if the retention is enable on the compactor side.
+      # CLI flag: -store.retention
+      retention_period: 183d
+    # The compactor block configures the compactor component. This component periodically compacts index shards to more performant forms.
+    compactor:
+      # The shared store used for storing boltdb files.
+      # Supported types: gcs, s3, azure, swift, filesystem, bos.
+      # CLI flag: -boltdb.shipper.compactor.shared-store
+      shared_store: azure
+
+  # -- Check https://grafana.com/docs/loki/latest/configuration/#schema_config for more info on how to configure schemas
+  # The schema_config block configures schemas from given dates.
+  schemaConfig:
+    # The configuration for chunk index schemas.
+    configs:
+      # The date of the first day that index buckets should be created. Use
+      # a date in the past if this is your only period_config, otherwise
+      # use a date when you want the schema to switch over.
+      # In YYYY-MM-DD format, for example: 2018-04-15.
+    - from: 2023-01-01
+      # Which store to use for the chunks. Either aws, azure, gcp,
+      # bigtable, gcs, cassandra, swift or filesystem. If omitted, defaults to the same
+      # value as store.
+      object_store: azure
+      # Which store to use for the index. Either aws, aws-dynamo, gcp, bigtable, bigtable-hashed,
+      # cassandra, boltdb or boltdb-shipper.
+      store: boltdb-shipper
+      # The schema version to use, current recommended schema is v11.
+      schema: v11
+      # Configures how the index is updated and stored.
+      index:
+         # Table prefix for all period tables.
+        prefix: loki_index_
+        # Table period.
+        period: 24h
+        
   # -- Check https://grafana.com/docs/loki/latest/configuration/#storage_config for more info on how to configure storages
-  # storageConfig:  
-  #   boltdb_shipper:
-  #     shared_store: azure
-  #   azure:
-  #     account_key: {{ .Values.grafana.loki_primary_access_key | fetchSecretValue | quote }}
-  #     account_name: monitoringloki
-  #     container_name: monitoring-loki
-  #     request_timeout: 0
+  storageConfig:
+    # The azure_storage_config configures Azure as a general storage for different data generated by Loki.
+    azure:
+      # Azure storage account key.
+      # CLI flag: -<prefix>.azure.account-key
+      account_key: "${ACCOUNT_KEY}"
+      # Azure storage account name.
+      # CLI flag: -<prefix>.azure.account-name
+      account_name: "${ACCOUNT_NAME}"
+      # Name of the storage account blob container used to store chunks.
+      # This container must be created before running Loki.
+      # CLI flag: -<prefix>.azure.container-name
+      container_name: "${CONTAINER_NAME}"
+      # Timeout for requests made against azure blob storage.
+      # CLI flag: -<prefix>.azure.request-timeout
+      request_timeout: 0
+    # Configures storing index in an Object Store(GCS/S3/Azure/Swift/Filesystem) in the form of
+    # boltdb files.
+    # Required fields only required when boltdb-shipper is defined in config.
+    boltdb_shipper:
+      # Directory where ingesters would write boltdb files which would then be
+      # uploaded by shipper to configured storage
+      # CLI flag: -boltdb.shipper.active-index-directory
+      active_index_directory: /var/loki/data/loki/boltdb-shipper-active
+      # Cache location for restoring boltDB files for queries
+      # CLI flag: -boltdb.shipper.cache-location
+      cache_location: /var/loki/data/loki/boltdb-shipper-cache
+      # TTL for boltDB files restored in cache for queries
+      # CLI flag: -boltdb.shipper.cache-ttl
+      cache_ttl: 24h
+      # Shared store for keeping boltdb files. Supported types: gcs, s3, azure,
+      # filesystem
+      # CLI flag: -boltdb.shipper.shared-store
+      shared_store: azure
+    # Configures storing the chunks on the local file system. Required
+    # fields only required when filesystem is present in the configuration.
+    filesystem:
+      # Directory to store chunks in.
+      # CLI flag: -local.chunk-directory
+      directory: /var/loki/data/loki/chunks
