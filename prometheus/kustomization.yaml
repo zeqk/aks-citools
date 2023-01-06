@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - thanos-external-secrets.yml
+helmCharts:
+  - name: kube-prometheus-stack
+    repo: https://prometheus-community.github.io/helm-charts
+    version: 43.1.0
+    releaseName: prometheus
+    namespace: monitoring
+    valuesFile: values.yml
+
+patches:
+  - path: externalLabels.prometheus.patch.yml
+    target:
+      kind: Prometheus
+      

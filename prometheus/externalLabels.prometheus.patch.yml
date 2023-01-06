@@ -1,0 +1,7 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus-kube-prometheus-prometheus
+spec:
+  externalLabels:
+    cluster: aks-itools-iprd-ue

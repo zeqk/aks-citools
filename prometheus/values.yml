@@ -1,0 +1,69 @@
+## Manages Prometheus and Alertmanager components
+##
+prometheusOperator:
+  ## Thanos side-car image when configured
+  ##
+  thanosImage:
+    registry: quay.io
+    repository: thanos/thanos
+    tag: v0.24.0 #https://github.com/thanos-io/thanos/issues/2211#issuecomment-1270088022
+    sha: ""
+
+## Deploy a Prometheus instance
+##
+prometheus:
+    ## Settings affecting prometheusSpec
+    ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#prometheusspec
+    ##
+    prometheusSpec:
+      ## How long to retain metrics
+      ##
+      retention: 15d
+
+      ## External labels to add to any time series or alerts when communicating with external systems
+      ##
+      # externalLabels:
+      #   cluster: ${cluster_name}
+
+      ## Thanos configuration allows configuring various aspects of a Prometheus server in a Thanos environment.
+      ## This section is experimental, it may change significantly without deprecation notice in any release.
+      ## This is experimental and may change significantly without backward compatibility in any release.
+      ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#thanosspec
+      ##
+      thanos:
+        objectStorageConfig:
+          key: thanos.yml
+          name: thanos-sidecar-objstore-config # Secret creado mediante ESO
+
+    # Service for thanos service discovery on sidecar
+    # Enable this can make Thanos Query can use
+    # `--store=dnssrv+_grpc._tcp.${kube-prometheus-stack.fullname}-thanos-discovery.${namespace}.svc.cluster.local` to discovery
+    # Thanos sidecar on prometheus nodes
+    # (Please remember to change ${kube-prometheus-stack.fullname} and ${namespace}. Not just copy and paste!)
+    thanosService:
+      enabled: true
+
+    # ServiceMonitor to scrape Sidecar metrics
+    # Needs thanosService to be enabled as well
+    thanosServiceMonitor:
+      enabled: true
+
+grafana:
+  enabled: false
+  ## ForceDeployDatasources Create datasource configmap even if grafana deployment has been disabled
+  ##
+  forceDeployDatasources: false
+
+  ## ForceDeployDashboard Create dashboard configmap even if grafana deployment has been disabled
+  ##
+  forceDeployDashboards: true
+  
+  ## Deploy default dashboards
+  ##
+  defaultDashboardsEnabled: true
+  sidecar:
+    dashboards:
+      multicluster:
+        global:
+          enabled: true
+
