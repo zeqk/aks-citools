@@ -1,0 +1,48 @@
+## @section Thanos common parameters
+
+## @param existingObjstoreSecret Secret with Objstore Configuration
+## Note: This will override objstoreConfig
+existingObjstoreSecret: thanos-objstore-config # Secret creado mediante ESO
+
+## Bitnami Thanos image
+## ref: https://hub.docker.com/r/bitnami/thanos/tags/
+image:
+  ## @param image.registry Thanos image registry
+  registry: docker.io
+  ## @param image.repository Thanos image repository
+  repository: bitnami/thanos
+  ## @param image.tag Thanos image tag (immutable tags are recommended)
+  tag: 0.24.0-scratch-r10 # La version debe coincidir con la del sidecar
+
+
+## @section Thanos Query parameters
+query:
+  ## @param query.enabled Set to true to enable Thanos Query component
+  enabled: true
+
+  ## @param query.stores Statically configure store APIs to connect with Thanos Query
+  stores: [
+    "dnssrv+_grpc._tcp.prometheus-kube-prometheus-thanos-discovery.monitoring.svc.cluster.local"
+  ]
+
+  ## Thanos Query containers' resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param query.resources.limits The resources limits for the Thanos Query container
+  ## @param query.resources.requests The requested resources for the Thanos Query container
+  resources:
+    limits:       
+      cpu: '250m'
+      memory: '256Mi'
+    requests: 
+      cpu: '100m'
+      memory: '64Mi'
+
+## @section Thanos Store Gateway parameters
+storegateway:
+  ## @param storegateway.enabled Enable/disable Thanos Store Gateway component
+  enabled: true
+
+## @section Thanos Compactor parameters
+compactor:
+  ## @param compactor.enabled Enable/disable Thanos Compactor component
+  enabled: true
