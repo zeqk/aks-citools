@@ -16,6 +16,12 @@ config:
         Systemd_Filter _SYSTEMD_UNIT=kubelet.service
         Read_From_Tail On
 
+    # Node exporter
+    [INPUT]
+        name            node_exporter_metrics
+        tag             node_metrics
+        scrape_interval 2
+
   # https://docs.fluentbit.io/manual/pipeline/filters
   filters: |
 
@@ -47,6 +53,12 @@ config:
         auto_kubernetes_labels off
         line_format json
         label_map_path /fluent-bit/etc/kubernetes.map.json
+
+    [OUTPUT]
+        name            prometheus_exporter
+        match           node_metrics
+        host            0.0.0.0
+        port            2021
 
 #remove_keys kubernetes,stream
   ## https://docs.fluentbit.io/manual/pipeline/parsers
@@ -85,3 +97,8 @@ config:
         },
         "stream": "stream"
       }
+
+serviceMonitor:
+  enabled: true
+  jobLabel: jobLabel
+
