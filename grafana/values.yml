@@ -1,0 +1,83 @@
+resources:
+  # https://ranchermanager.docs.rancher.com/v2.0-v2.4/explanations/integrations-in-rancher/istio/cpu-and-memory-allocations#configuring-resource-allocations
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+default_timezone: browser
+adminPassword: OGM3MTgwMWY2MmY2MmM3ZmJlMzFlYzM5M2EwMjIzNGI5M2Y2YWE5NDZhYzhlNTZh
+grafana.ini:
+  server:
+    root_url: https://grafana-onazure.selftaught.com.ar/
+  auth:
+    disable_login_form: true
+  auth.basic:
+    enabled: false
+  auth.azuread:
+    name: Azure AD
+    enabled: true
+    allow_sign_up: true
+    # client_id: APPLICATION_ID
+    # client_secret: CLIENT_SECRET
+    scopes: openid email profile offline_access
+    # auth_url: https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/authorize
+    # token_url: https://login.microsoftonline.com/TENANT_ID/oauth2/v2.0/token
+    allowed_domains:
+    allowed_groups:
+    role_attribute_strict: false
+    allow_assign_grafana_admin: false
+envValueFrom:
+  GF_AUTH_AZUREAD_CLIENT_ID:
+    secretKeyRef:
+      name: azure-auth
+      key: client_id
+  GF_AUTH_AZUREAD_CLIENT_SECRET:
+    secretKeyRef:
+      name: azure-auth
+      key: client_secret
+  GF_AUTH_AZUREAD_AUTH_URL:
+    secretKeyRef:
+      name: azure-auth
+      key: auth_url
+  GF_AUTH_AZUREAD_TOKEN_URL:
+    secretKeyRef:
+      name: azure-auth
+      key: token_url
+
+sidecar:
+  # Set to true to skip tls verification for kube api calls
+  skipTlsVerify: false
+  # Log level default for all sidecars. Can be one of: DEBUG, INFO, WARN, ERROR, CRITICAL. Defaults to INFO
+  logLevel: DEBUG
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+  datasources:
+      enabled: true
+      defaultDatasourceEnabled: true
+      uid: prometheus
+      ## Create datasource for each Pod of Prometheus StatefulSet;
+      ## this uses headless service `prometheus-operated` which is
+      ## created by Prometheus Operator
+      ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/0fee93e12dc7c2ea1218f19ae25ec6b893460590/pkg/prometheus/statefulset.go#L255-L286
+      createPrometheusReplicasDatasources: true
+      label: grafana_datasource
+      labelValue: "1"
+serviceMonitor:
+    # If true, a ServiceMonitor CRD is created for a prometheus operator
+    # https://github.com/coreos/prometheus-operator
+    #
+    enabled: true
+
+    # Path to use for scraping metrics. Might be different if server.root_url is set
+    # in grafana.ini
+    path: "/metrics"
+    # Scrape interval. If not set, the Prometheus default scrape interval is used.
+    #
+    interval: ""
+    scheme: http
+    tlsConfig: {}
+    scrapeTimeout: 30s

@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: monitoring
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: selftaughtcomar-letsencrypt-staging
+spec:
+  tls:
+    - hosts:
+        - grafana-onazure.selftaught.com.ar
+      secretName: grafanaonazureselftaughtcomar-tls
+  rules:
+    - host: grafana-onazure.selftaught.com.ar
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
