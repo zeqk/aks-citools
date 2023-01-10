@@ -1,0 +1,5 @@
+config:
+  logLevel: info
+  serverPort: 3100
+  clients:
+    - url: http://loki-loki-distributed-distributor:3100/loki/api/v1/push
